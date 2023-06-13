@@ -17,9 +17,9 @@ if (!isset($_SESSION['username'])) {
 </head>
 <body>
     <a href="index.php">Home</a><br>
-    <a href="peserta.php">Data Peserta</a>
+    <a href="faskes.php">Data Faskes</a>
     
-    <h3>Tambah Data Faskes</h3>
+    <h3>Tambah Data Peserta</h3>
     <?php
     if (isset($_GET['pesan'])) {
         $pesan = $_GET['pesan'];
@@ -36,38 +36,42 @@ if (!isset($_SESSION['username'])) {
         # code...
     }
     ?>
-    <form action="aksi-tambah-faskes.php" method="post">
+    <form action="aksi-tambah-peserta.php" method="post">
         <table>
             <tr>
-                <td>Nama Faskes</td>
-                <td><input type="text" name="nama_faskes" id="" required="required"></td>
+                <td>NIK</td>
+                <td><input type="text" name="nik" id="" required="required"></td>
             </tr>
             <tr>
-                <td>Tingkat</td>
-                <td>
-                    <select name="tingkat" id="" required="required">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                    </select>
-                </td>
+                <td>Nama Peserta</td>
+                <td><input type="text" name="nama" id="" required="required"></td>
+            </tr>
+            <tr>
+                <td>Alamat</td>
+                <td><input type="text" name="alamat" id="" required="required"></td>
+            </tr>
+            <tr>
+                <td>Tanggal Lahir</td>
+                <td><input type="date" name="tgl_lahir" id="" required="required"></td>
             </tr>
             <tr>
                 <td><input type="submit" onclick="return confirm('Yakin Tambah?')" value="Simpan"></td>
             </tr>
         </table>
     </form>
-    <h3>Data Faskes</h3>
+    <h3>Data Peserta</h3>
     <table border="1" cellpadding="10">
         <tr>
             <td>No.</td>
-            <td>Nama Faskes</td>
-            <td>Tingkat</td>
+            <td>NIK</td>
+            <td>Nama Peserta</td>
+            <td>Alamat</td>
+            <td>Tanggal Lahir</td>
             <td>Aksi</td>
         </tr>
         <?php 
         $no = 1;
-        $query = mysqli_query($conn,"select * from faskes");
+        $query = mysqli_query($conn,"select * from peserta");
         
         while ($d = mysqli_fetch_array($query)) {
             # code...
@@ -75,11 +79,13 @@ if (!isset($_SESSION['username'])) {
         ?>
         <tr>
             <td><?php echo $no++ ?></td>
-            <td><?php echo $d['nama_faskes'] ?></td>
-            <td><?php echo $d['tingkat'] ?></td>
+            <td><?php echo $d['nik'] ?></td>
+            <td><?php echo $d['nama'] ?></td>
+            <td><?php echo $d['alamat'] ?></td>
+            <td><?php echo $d['tgl_lahir'] ?></td>
             <td>
-                <a href="edit-faskes.php?id_faskes=<?php echo $d['id_faskes'] ?>">Edit</a>|
-                |<a href="hapus-faskes.php?id_faskes=<?php echo $d['id_faskes'] ?>" onclick="return confirm('Yakin Hapus')">Hapus</a>
+                <a href="edit-peserta.php?nik=<?php echo $d['nik'] ?>">Edit</a>|
+                |<a href="hapus-peserta.php?nik=<?php echo $d['nik'] ?>" onclick="return confirm('Yakin Hapus')">Hapus</a>
 
             </td>
         </tr>

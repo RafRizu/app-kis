@@ -2,7 +2,8 @@
 include "koneksi.php";
 session_start();
 if (!isset($_SESSION['username'])) {
-    header("location:index.php");
+    header("location:login.php");
+    # code...
 }
 ?>
 <!DOCTYPE html>
@@ -11,165 +12,128 @@ if (!isset($_SESSION['username'])) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Faskes</title>
+    <title>Aplikasi KIS</title>
 </head>
 <body>
+<h3>Selamat Datang,<?php echo $_SESSION['username'] ?></h3>
+
+    <a href="logout.php">logout</a><br>
+    <a href="ganti-password.php">Ganti Password</a><br>
+    <a href="faskes.php">Data Faskes</a><br>
+    <a href="peserta.php">Data Peserta</a><br>
+    <a href="index.php">Tambah Data KIS</a><br>
+    <hr>
     <form action="aksi-edit-kis.php" method="post">
-        <?php 
-            if (isset($_GET['pesan'])) {
-                $pesan = $_GET['pesan'];
-                if ($pesan == "input") {
-                    echo "Data Berhasil Diinput";
-                    # code...
-                }elseif($pesan == "edit"){
-                    echo "Data Berhasil Diedit";
-                }elseif($pesan == "hapus"){
-                    echo "Data Berhasil Dihapus";
-                }else{
-                    echo "Data Gagal";
-                }
-                # code...
-            }
-        ?>
-
-        <table>
-            <?php
-            // $maxquery = mysqli_query($conn,"select max(nik) as kodeTerbesar from warga");
-            // $maxdata = mysqli_fetch_array($maxquery);
-            // $maxvalue = $maxdata['kodeTerbesar'];
-            // $maxvalue++;
-            $idkis = $_GET['idkis'];
-            $editquery = mysqli_query($conn,"select * from datakis where nokartu='$idkis'");
-            while ($d = mysqli_fetch_array($editquery)) {
-                # code...
-            
-            ?>
-            <tr>
-                <td>No Kartu</td>
-                <td><input type="text" name="idkis" value="<?php echo $d['nokartu']; ?>" id="" required="required" readonly></td>
-            </tr>
-            <tr>
-                <td>NIK</td>
-                <td>
-                    <select name="nik" id="">
-                                                        <?php
-                    $qwarga = mysqli_query($conn,"select * from warga");
-                    while ($dw = mysqli_fetch_array($qwarga)) {
-                        # code...
-                    
-                ?>
-                        <option value="<?php echo $dw['nik'] ?>"><?php echo $dw['nik']; } ?></option>
-                    </select>
-                </td>
-            </tr>
-
-            <tr>
-                <td>Nama</td>
-                <td><input type="text" name="nama" value="<?php echo $d['nama']; ?>"  id="" required="required"></td>
-            </tr>
-            <tr>
-                <td>Alamat</td>
-                <td><input type="text" name="alamat" value="<?php echo $d['alamat'] ?>"></td>
-            </tr>
-            <tr>
-                <td>Tanggal Lahir</td>
-                <td><input type="date" name="ttl" value="<?php echo $d['tanggal']; ?>"  id="" required="required"></td>
-            </tr>
-            <tr>
-
-                <td>Faskes</td>
-                <td><select name="idfaskes" id="">                <?php
-                    $qfaskes = mysqli_query($conn,"select idfaskes from faskes");
-                    while ($df = mysqli_fetch_array($qfaskes)) {
-                        # code...
-                ?>
-                    <option value="<?php echo $df['idfaskes'] ?>"><?php echo $df['idfaskes']; } ?></option>
-                </select>
-            
-            </td>
-
-            </tr>
-            <tr>
-                <td><input type="submit" value="Simpan"></td>
-                <td><input type="reset" value="Reset"></td>
-                <td><a href="dashboard.php">Dashboard</a></td>
-            </tr>
-        </table>
-    </form>
-<?php
-            }
-?>
-
-
-<br>
-<hr>
-<br>
-<?php
-
-?>
-        <form action="edit-kis.php" method="get">
-            <input type="text" name="cari" id="">
-            <select name="berdasarkan" id="">
-                <option value="nama">Nama</option>
-                <option value="nokartu">No kartu</option>
-            </select>
-            <input type="submit" value="cari">
-        </form><br>
-<table border="1">
-    <tr>
-        <td>No Kartu</td>
-        <td>Nama</td>
-        <td>Alamat</td>
-        <td>Tanggal Lahir</td>
-        <td>NIK</td>
-        <td>Faskes</td>
-        <td>Aksi</td>
-    </tr>
-
-<?php
-
-if (isset($_GET['cari'])) {
-    $cari = $_GET['cari'];
-    $berdasarkan = $_GET['berdasarkan'];
-    $query = mysqli_query($conn,"select * from datakis where ".$berdasarkan." like '%".$cari."%'");
-    $cek = mysqli_num_rows($query);
-    if ($cek = 0) {
-        echo "data tidak ada";
-        $query = mysqli_query($conn,"select * from datakis");
+        <h3>Edit Data KIS</h3>
+        <?php
+    if (isset($_GET['pesan'])) {
+        $pesan = $_GET['pesan'];
+        if ($pesan == "gagal") {
+            echo "Data Gagal";
+            # code...
+        }elseif($pesan == "input"){
+            echo "Data Berhasil Diinput";
+        }elseif($pesan == "edit"){
+            echo "Data Berhasil Diedit";
+        }elseif($pesan == "hapus"){
+            echo "Data Berhasil Dihapus";
+        }
         # code...
     }
-    # code...
-}else{
-    $query = mysqli_query($conn,"select * from datakis");
-}
+    ?>
+    <table>
+        <?php
+        $tahun=date('Y');
+        $maxdata = mysqli_query($conn,"select max(no_kis) as kodeTerbesar from kis");
+        $fetchdata = mysqli_fetch_array($maxdata);
+        $maxvalue = $fetchdata['kodeTerbesar'];
+        $urutan = (int) substr($maxvalue,7,7);
+        $urutan++;
 
-while($data = mysqli_fetch_array($query)){
-
-
-?>
-
-
-    <tr>
-
-        <td><?php echo $data['nokartu']; ?></td>
-        <td><?php echo $data['nama']; ?></td>
-        <td><?php echo $data['alamat']; ?></td>
-        <td><?php echo $data['tanggal']; ?></td>
-        <td><?php echo $data['nik']; ?></td>
-        <td><?php echo $data['tingkat']; ?></td>
-        <td>
-            <a href="edit-warga.php?nik=<?php echo $data['nik'];?>">edit</a>
-            <a href="hapus-warga.php?nik=<?php echo $data['nik'];?>" onclick="return confirm('Yakin Hapus?')">hapus</a>
-            
-        </td>
-    </tr>
-    <?php
-}
-?>
-</table>
+        $maxnilai = $tahun.sprintf('%04s',$urutan);
 
 
+        $no_kis = $_GET['no_kis'];
+        $qedit = mysqli_query($conn,"select * from kis where no_kis = '$no_kis'");
+        while ($ed = mysqli_fetch_array($qedit)) {
+    
+            # code...
+        
 
+        ?>
+        <tr>
+            <td>No. Kis</td>
+            <td><input type="text" name="no_kis" value="<?php echo $ed['no_kis'] ?>" id="" readonly></td>
+        </tr>
+        <tr>
+            <td>NIK</td>
+            <td>
+                <select name="nik" id="">
+                    <option value="<?php echo $ed['nik'] ?>"><?php echo $ed['nik'] ?></option>
+                    <option value="<?php echo $ed['nik'] ?>">------</option>
+                    <?php
+                    $qpeserta = mysqli_query($conn,"select nik from peserta");
+                    while ($dp = mysqli_fetch_array($qpeserta)) {
+                        # code...
+                    
+                    ?>
+                    <option value="<?php echo $dp['nik'] ?>"><?php echo $dp['nik'] ?></option>
+                    <?php } ?>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Faskes</td>
+            <td>
+                <select name="id_faskes" id="">
+                <?php
+                    $qfaskes = mysqli_query($conn,"select * from faskes");
+                    while ($df = mysqli_fetch_array($qfaskes)) {
+                        # code...
+                    
+                    ?>
+                    <option value="<?php echo $df['id_faskes'] ?>"><?php echo $df['nama_faskes'] ?></option>
+                    <?php }
+                    } ?>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td><input type="submit" onclick="return confirm('Yakin Edit?')" value="Simpan"></td>
+        </tr>
+    </table>   
+    </form>
 
+    <table border="1" cellpadding="5">
+        <tr>
+            <td>No</td>
+            <td>No. KIS</td>
+            <td>NIK</td>
+            <td>Nama Peserta</td>
+            <td>Faskes</td>
+            <td>Aksi</td>
+        </tr>
+        <?php 
+        $no = 1;
+        $query = mysqli_query($conn,"select * from datakis");
+        
+        while ($d = mysqli_fetch_array($query)) {
+            # code...
+        
+        ?>
+        <tr>
+            <td><?php echo $no++ ?></td>
+            <td><?php echo $d['no_kis'] ?></td>
+            <td><?php echo $d['nik'] ?></td>
+            <td><?php echo $d['nama'] ?></td>
+            <td><?php echo $d['nama_faskes'] ?></td>
+            <td>
+                <a href="edit-kis.php?no_kis=<?php echo $d['no_kis'] ?>">Edit</a>|
+                |<a href="hapus-kis.php?no_kis=<?php echo $d['no_kis'] ?>" onclick="return confirm('Yakin Hapus?')">Hapus</a>|
+                |<a href="cetak-kis.php?no_kis=<?php echo $d['no_kis'] ?>">Cetak</a>
+            </td>
+        </tr>
+        <?php } ?>
+    </table>
 </body>
 </html>

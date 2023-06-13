@@ -1,20 +1,16 @@
 <?php
-session_start();
-include 'koneksi.php';
-
+include "koneksi.php";
 $username = $_POST['username'];
 $password = $_POST['password'];
-
-// $query = "select * from user where username = '$username' && password = '$password'";
-$data = mysqli_query($conn,"select * from user where username = '$username' && password = '$password'");
-
-$cek = mysqli_num_rows($data);
+$query = mysqli_query($conn,"select * from user where username = '$username' && password = '$password'");
+$cek = mysqli_num_rows($query);
 
 if ($cek>0) {
+ session_start();
     $_SESSION['username'] = $username;
-    $_SESSION['status'] = "login";
-    header("location:dashboard.php");
+    header("location:index.php");
     # code...
-}else{
-    header("location:index.php?pesan=gagal");
+}else {
+    header("location:login.php?pesan=gagal");
+    # code...
 }
